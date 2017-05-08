@@ -1,7 +1,7 @@
 var logger = require('./../lib/logger');
 var Mongoose = require('mongoose');
 var customerSchema = new Mongoose.Schema({
-    id: Number,
+    id: String,
     name: String,
     address: String,
     dateOfbirth: Date    
