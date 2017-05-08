@@ -1,0 +1,16 @@
+{
+    "mongodb": {
+        "url": "mongodb://localhost:27017/customerdb"
+    },
+
+    "logs": {
+        "dir": "/var/log/customer-api",
+        "filename": "customer-api.log",
+        "maxFiles": 10,
+        "console": true
+    },
+
+    "restserver": {
+        "port": 8200
+    }
+}
