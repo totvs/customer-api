@@ -1,14 +1,14 @@
 var express = require('express');
 var logger = require('./../lib/logger');
 var router = express.Router();
-var Customer = require('../models/customer.model.js');
+var User = require('../models/user.model.js');
 const uuid = require('uuid/v4');
 
 
 router.get('/:id*?', function (req, res) {
     console.log("params: ", req.query);
     if (req.params.id) {
-        Customer.find({
+        User.find({
             id: req.params.id
         }, function (err, result) {
             res.json(result);
@@ -31,8 +31,8 @@ router.get('/:id*?', function (req, res) {
                 mongoFilterObj[el] = reqParams[el];
             }
         });
-        var query = Customer.find(mongoFilterObj);
-        Customer.count(mongoFilterObj, function (err, totalCount) {
+        var query = User.find(mongoFilterObj);
+        User.count(mongoFilterObj, function (err, totalCount) {
             console.log("Count total: ", totalCount);
             var pages = Math.ceil(totalCount / pageSize);
             console.log("Count total: ", totalCount);
@@ -63,12 +63,16 @@ router.get('/:id*?', function (req, res) {
 
 
 router.post('/', function (req, res, next) {
-    var customer = req.body;
-    if (!customer.id) {
-        customer.id = uuid();
+    var user = req.body;
+    if (!user.id) {
+        user.id = uuid();
     }
-    Customer.create(customer, function (err, item) {
-        res.status(200).send(customer.id);
+    User.create(user, function (err, item) {
+        if (err)
+            res.status(500).send(err);
+        else
+            res.status(200).send(user.id);
+
         if (next) next();
     });
 });
@@ -76,7 +80,7 @@ router.post('/', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
     var id = req.params.id;
     if (id) {
-        Customer.remove({
+        User.remove({
             id: id
         }, function (err, result) {
             if (err)
@@ -90,11 +94,11 @@ router.delete('/:id', function (req, res, next) {
 });
 
 router.put('/:id', function (req, res, next) {
-    var customer = req.body;
+    var user = req.body;
     var id = req.params.id;
-    Customer.update({
+    User.update({
         id: id
-    }, customer, function (err, result) {
+    }, user, function (err, result) {
         res.status(200).send();
         if (next) next();
     });
