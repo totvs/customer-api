@@ -1,5 +1,6 @@
 var logger = require('./../lib/logger');
 var Mongoose = require('mongoose');
+var moment = require('moment');
 var customerSchema = new Mongoose.Schema({
     id: String,
     name: String,
@@ -11,10 +12,15 @@ var customerSchema = new Mongoose.Schema({
     active: Boolean    
 });
 
-// customerSchema.pre('save', (doc, next) => {
-//     this.created_at = new Date();
-//     next();
-// });
+customerSchema.pre('save', function(next) {
+    this.created_at = new Date().toISOString();
+    next();
+});
+
+customerSchema.pre('update', function(next) {
+    this.updated_at = new Date().toISOString();
+    next();
+});
 
 var Customer = Mongoose.model('Customer', customerSchema);
 

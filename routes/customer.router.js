@@ -5,11 +5,12 @@ var Customer = require('../models/customer.model.js');
 const uuid = require('uuid/v4');
 
 
+
 /**
  * @apiVersion 0.1.0
- * @api {get} costumer/:id Find a costumer
- * @apiGroup Costumer
- * @apiParam {id} id Costumer id
+ * @api {get} customer/:id Find a customer
+ * @apiGroup customer
+ * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
@@ -17,16 +18,15 @@ const uuid = require('uuid/v4');
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)"
+ *      "created_at": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
  *      "updated_at": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)"
  *    }
- * @apiErrorExample {json} Costumer not found
+ * @apiErrorExample {json} customer not found
  *    HTTP/1.1 404 Not Found
  * @apiErrorExample {json} Find error
  *    HTTP/1.1 500 Internal Server Error
  */
 router.get('/:id*?', function (req, res) {
-    console.log("params: ", req.query);
     if (req.params.id) {
         Customer.find({
             id: req.params.id
@@ -53,9 +53,7 @@ router.get('/:id*?', function (req, res) {
         });
         var query = Customer.find(mongoFilterObj);
         Customer.count(mongoFilterObj, function (err, totalCount) {
-            console.log("Count total: ", totalCount);
             var pages = Math.ceil(totalCount / pageSize);
-            console.log("Count total: ", totalCount);
             console.log("Pages: ", pages);
             //ORDER
             if (reqParams.order) {
@@ -81,14 +79,20 @@ router.get('/:id*?', function (req, res) {
     }
 });
 
+router.get('/diff/:date*?', function(req, res){
+    if (req.params) {
+        console.log('diff')
+    }
+});
+
 /**
  * @apiVersion 0.1.0
- * @api {post} costumer/ Register a new costumer
- * @apiGroup Costumer
- * @apiParam {Number} id Costumer id
- * @apiParam {String} name Costumer name
- * @apiParam {String} address Costumer address
- * @apiParam {String} dateOfbirth Costumer dateOfbirth
+ * @api {post} customer/ Register a new customer
+ * @apiGroup customer
+ * @apiParam {Number} id customer id
+ * @apiParam {String} name customer name
+ * @apiParam {String} address customer address
+ * @apiParam {String} dateOfbirth customer dateOfbirth
  * @apiParamExample {json} Input
  *    {
  *      "name": "Study",
@@ -121,9 +125,9 @@ router.post('/', function (req, res, next) {
 
 /**
  * @apiVersion 0.1.0
- * @api {delete} costumer/:id Remove a costumer
- * @apiGroup Costumer
- * @apiParam {id} id Costumer id
+ * @api {delete} customer/:id Remove a customer
+ * @apiGroup customer
+ * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
  * @apiErrorExample {json} Delete error
@@ -145,6 +149,36 @@ router.delete('/:id', function (req, res, next) {
     }
 });
 
+/**
+ * @apiVersion 0.1.0
+ * @api {put} customer/ Edit a customer
+ * @apiGroup customer
+ * @apiParam {Number} id customer id
+ * @apiParam {String} name customer name
+ * @apiParam {String} address customer address
+ * @apiParam {String} dateOfbirth customer dateOfbirth
+ * @apiParamExample {json} Input
+ *    {
+ *      "name": "Nelson",
+ *      "address": "Rua Emilio Castelar, 51",
+ *      "dateOfbirth": "06/13/1989"
+ *    }
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "id": as4s4f5wh548h9,
+ *      "name": "Nelson",
+ *      "address": "Rua Emilio Castelar, 51",
+ *      "dateOfbirth": "06/13/1989",
+ *      "created_at": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
+ *      "updated_at": Fri Nov 12 2017 13:35:49 GMT-0200 (-02),
+ *      "active": true
+ *    }
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 204 No Content
+ * @apiErrorExample {json} Register error
+ *    HTTP/1.1 500 Internal Server Error
+ */
 router.put('/:id', function (req, res, next) {
     var customer = req.body;
     var id = req.params.id;
