@@ -1,26 +1,19 @@
 var logger = require('./../lib/logger');
 var Mongoose = require('mongoose');
 var moment = require('moment');
+var mongoose_delete = require('mongoose-delete');
+
 var customerSchema = new Mongoose.Schema({
     id: String,
     name: String,
     address: String,
     dateOfbirth: Date,
-    created_at: Date,
-    updated_at: Date,
-    deleted_at: Date,
-    active: Boolean    
+},
+{
+    timestamps: true
 });
 
-customerSchema.pre('save', function(next) {
-    this.created_at = new Date().toISOString();
-    next();
-});
-
-customerSchema.pre('update', function(next) {
-    this.updated_at = new Date().toISOString();
-    next();
-});
+customerSchema.plugin(mongoose_delete, { deletedAt : true });
 
 var Customer = Mongoose.model('Customer', customerSchema);
 
