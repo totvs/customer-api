@@ -31,7 +31,6 @@ function initRestServer() {
     app.listen(config.restserver.port, function () {
         logger.info('Rest Server started on port ' + config.restserver.port);
     });
-
 }
 
 function initDB() {
