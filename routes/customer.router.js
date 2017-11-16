@@ -35,47 +35,7 @@ router.get('/', function (req, res) {
             res.json(result);
         });
     } else {
-
-        var reservedWords = ['order', 'page', 'pageSize'];
-        var reqParams = req.query;
-
-        //order, page, pageSize
-        var page = parseInt(reqParams.page) || 1;
-        var pageSize = parseInt(reqParams.pageSize) || 20;
-
-        //FILTERS
-        var objectKeys = Object.getOwnPropertyNames(reqParams);
-        var mongoFilterObj = {};
-        objectKeys.forEach(function (el) {
-            if (reservedWords.indexOf(el) == -1) {
-                mongoFilterObj[el] = reqParams[el];
-            }
-        });
-        var query = Customer.find(mongoFilterObj);
-        Customer.count(mongoFilterObj, function (err, totalCount) {
-            var pages = Math.ceil(totalCount / pageSize);
-            console.log("Pages: ", pages);
-            //ORDER
-            if (reqParams.order) {
-                var mongoOrderObj = {};
-                var orders = reqParams.order.split(",");
-                orders.forEach(function (el) {
-                    mongoOrderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
-                });
-                query.sort(mongoOrderObj);
-            }
-            query.limit(pageSize);
-            query.skip(pageSize * (page - 1));
-            query.exec(
-                function (err, result) {
-                    res.json({
-                        hasNext: page < pages, //ou false
-                        items: result
-                    });
-                }
-            );
-
-        });
+        findCustomer(req, res);
     }
 });
 
@@ -101,53 +61,56 @@ router.get('/', function (req, res) {
  * @apiErrorExample {json} Find error
  *    HTTP/1.1 500 Internal Server Error
  */
-router.get('/diff/:time', function(req, res){
-    var time = req.params.time;
-    var reservedWords = ['order', 'page', 'pageSize'];
+router.get('/diff/:time', function (req, res) {
+    findCustomer(req, res);
+});
+
+function findCustomer(req, res) {
     var reqParams = req.query;
+    var mongoFilterObj = transformFilter(reqParams);
+    Customer.count(mongoFilterObj, function (err, totalCount) {
+        var query = Customer.find(mongoFilterObj);
+        var page = parseInt(reqParams.page) || 1;
+        var pageSize = parseInt(reqParams.pageSize) || 20;
+        var pages = Math.ceil(totalCount / pageSize);
+        if (reqParams.order) {
+            var order = transformOrder(reqParams.order, query);
+            query.sort(order);
+        }
+        if (req.params && req.params.time) {
+            query.where('updatedAt').gt(new Date(req.params.time));
+        }
+        query.limit(pageSize);
+        query.skip(pageSize * (page - 1));
+        query.exec(function (err, result) {
+            res.json({
+                hasNext: page < pages,
+                items: result
+            });
+        });
+    });
+}
 
-    //order, page, pageSize
-    var page = parseInt(reqParams.page) || 1;
-    var pageSize = parseInt(reqParams.pageSize) || 20;
+function transformOrder(order) {
+    var mongoOrderObj = {};
+    var orders = order.split(",");
+    orders.forEach(function (el) {
+        mongoOrderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
+    });
+    return mongoOrderObj;
+}
 
-    //FILTERS
+function transformFilter(reqParams) {
+    var reservedWords = ['order', 'page', 'pageSize'];
     var objectKeys = Object.getOwnPropertyNames(reqParams);
     var mongoFilterObj = {};
-
     objectKeys.forEach(function (el) {
         if (reservedWords.indexOf(el) == -1) {
             mongoFilterObj[el] = reqParams[el];
         }
     });
-    
-    var query = Customer.find(mongoFilterObj)
-    .where('updatedAt').gt(new Date(time));
-
-    Customer.count(mongoFilterObj, function (err, totalCount) {
-        var pages = Math.ceil(totalCount / pageSize);
-        console.log("Pages: ", pages);
-        //ORDER
-        if (reqParams.order) {
-            var mongoOrderObj = {};
-            var orders = reqParams.order.split(",");
-            orders.forEach(function (el) {
-                mongoOrderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
-            });
-            query.sort(mongoOrderObj);
-        }
-        query.limit(pageSize);
-        query.skip(pageSize * (page - 1));
-        query.exec(
-            function (err, result) {
-                res.json({
-                    hasNext: page < pages, //ou false
-                    items: result
-                });
-            }
-        );
-
-    });
-});
+    return mongoFilterObj;
+}
 
 /**
  * @apiVersion 0.1.0
