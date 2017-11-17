@@ -28,6 +28,8 @@ function initRestServer() {
     app.use('/api/v1/customers', customerRouter);
     app.use('/api/v1/users', userRouter);
 
+    app.use('/doc', express.static('doc'));
+
     app.listen(config.restserver.port, function () {
         logger.info('Rest Server started on port ' + config.restserver.port);
     });

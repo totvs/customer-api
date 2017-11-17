@@ -67,9 +67,9 @@ router.get('/diff/:time', function (req, res) {
 
 function findCustomer(req, res) {
     var reqParams = req.query;
-    var mongoFilterObj = transformFilter(reqParams);
-    Customer.count(mongoFilterObj, function (err, totalCount) {
-        var query = Customer.find(mongoFilterObj);
+    var filterObj = transformFilter(reqParams);
+    Customer.count(filterObj, function (err, totalCount) {
+        var query = Customer.find(filterObj);
         var page = parseInt(reqParams.page) || 1;
         var pageSize = parseInt(reqParams.pageSize) || 20;
         var pages = Math.ceil(totalCount / pageSize);
@@ -92,24 +92,24 @@ function findCustomer(req, res) {
 }
 
 function transformOrder(order) {
-    var mongoOrderObj = {};
+    var orderObj = {};
     var orders = order.split(",");
     orders.forEach(function (el) {
-        mongoOrderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
+        orderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
     });
-    return mongoOrderObj;
+    return orderObj;
 }
 
 function transformFilter(reqParams) {
     var reservedWords = ['order', 'page', 'pageSize'];
     var objectKeys = Object.getOwnPropertyNames(reqParams);
-    var mongoFilterObj = {};
+    var filterObj = {};
     objectKeys.forEach(function (el) {
         if (reservedWords.indexOf(el) == -1) {
-            mongoFilterObj[el] = reqParams[el];
+            filterObj[el] = reqParams[el];
         }
     });
-    return mongoFilterObj;
+    return filterObj;
 }
 
 /**
