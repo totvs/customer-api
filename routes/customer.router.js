@@ -8,9 +8,8 @@ const uuid = require('uuid/v4');
 
 /**
  * @apiVersion 0.1.0
- * @api {get} customer/:id Find a customer
+ * @api {get} customer/ Find all customers
  * @apiGroup Customer
- * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
@@ -18,12 +17,10 @@ const uuid = require('uuid/v4');
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
- *      "updated_at": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
+ *      "createdAt": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
+ *      "updatedAt": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
  *      "deleted": false
  *    }
- * @apiErrorExample {json} customer not found
- *    HTTP/1.1 404 Not Found
  * @apiErrorExample {json} Find error
  *    HTTP/1.1 500 Internal Server Error
  */
@@ -52,8 +49,8 @@ router.get('/', function (req, res) {
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
- *      "updated_at": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
+ *      "createdAt": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
+ *      "updatedAt": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
  *      "deleted": false
  *    }
  * @apiErrorExample {json} customer not found
@@ -83,6 +80,7 @@ function findCustomer(req, res) {
         query.limit(pageSize);
         query.skip(pageSize * (page - 1));
         query.exec(function (err, result) {
+            res.setHeader('Date', new Date());
             res.json({
                 hasNext: page < pages,
                 items: result
@@ -133,7 +131,7 @@ function transformFilter(reqParams) {
  *      "name": "Study",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
+ *      "createdAt": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
  *      "deleted": false
  *    }
  * @apiErrorExample {json} Register error
@@ -145,6 +143,7 @@ router.post('/', function (req, res, next) {
         customer.id = uuid();
     }
     Customer.create(customer, function (err, item) {
+        res.setHeader('Date', new Date());
         res.status(200).send(item);
         if (next) next();
     });
@@ -166,6 +165,7 @@ router.delete('/:id', function (req, res, next) {
         Customer.delete({
             id: id
         }, function (err, result) {
+            res.setHeader('Date', new Date());
             if (err)
                 res.send(err);
             else {
@@ -193,6 +193,7 @@ router.delete('/remove/:id', function (req, res, next) {
         Customer.remove({
             id: id
         }, function (err, result) {
+            res.setHeader('Date', new Date());
             if (err)
                 res.send(err);
             else {
@@ -224,9 +225,9 @@ router.delete('/remove/:id', function (req, res, next) {
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
- *      "updated_at": Fri Nov 12 2017 13:35:49 GMT-0200 (-02),
- *      "active": true
+ *      "createdAt": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
+ *      "updatedAt": Fri Nov 12 2017 13:35:49 GMT-0200 (-02),
+ *      "deleted": false
  *    }
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
@@ -239,6 +240,7 @@ router.put('/:id', function (req, res, next) {
     Customer.update({
         id: id
     }, customer, function (err, result) {
+        res.setHeader('Date', new Date());
         res.status(200).send();
         if (next) next();
     });
