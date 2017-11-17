@@ -83,6 +83,7 @@ function findCustomer(req, res) {
         query.limit(pageSize);
         query.skip(pageSize * (page - 1));
         query.exec(function (err, result) {
+            res.setHeader('Date', new Date());
             res.json({
                 hasNext: page < pages,
                 items: result
@@ -145,6 +146,7 @@ router.post('/', function (req, res, next) {
         customer.id = uuid();
     }
     Customer.create(customer, function (err, item) {
+        res.setHeader('Date', new Date());
         res.status(200).send(item);
         if (next) next();
     });
@@ -166,6 +168,7 @@ router.delete('/:id', function (req, res, next) {
         Customer.delete({
             id: id
         }, function (err, result) {
+            res.setHeader('Date', new Date());
             if (err)
                 res.send(err);
             else {
@@ -193,6 +196,7 @@ router.delete('/remove/:id', function (req, res, next) {
         Customer.remove({
             id: id
         }, function (err, result) {
+            res.setHeader('Date', new Date());
             if (err)
                 res.send(err);
             else {
@@ -239,6 +243,7 @@ router.put('/:id', function (req, res, next) {
     Customer.update({
         id: id
     }, customer, function (err, result) {
+        res.setHeader('Date', new Date());
         res.status(200).send();
         if (next) next();
     });
