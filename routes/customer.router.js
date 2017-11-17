@@ -8,9 +8,8 @@ const uuid = require('uuid/v4');
 
 /**
  * @apiVersion 0.1.0
- * @api {get} customer/:id Find a customer
- * @apiGroup customer
- * @apiParam {id} id customer id
+ * @api {get} customer/ Find all customers
+ * @apiGroup Customer
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
@@ -18,12 +17,10 @@ const uuid = require('uuid/v4');
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
- *      "updated_at": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
+ *      "createdAt": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
+ *      "updatedAt": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
  *      "deleted": false
  *    }
- * @apiErrorExample {json} customer not found
- *    HTTP/1.1 404 Not Found
  * @apiErrorExample {json} Find error
  *    HTTP/1.1 500 Internal Server Error
  */
@@ -35,55 +32,15 @@ router.get('/', function (req, res) {
             res.json(result);
         });
     } else {
-
-        var reservedWords = ['order', 'page', 'pageSize'];
-        var reqParams = req.query;
-
-        //order, page, pageSize
-        var page = parseInt(reqParams.page) || 1;
-        var pageSize = parseInt(reqParams.pageSize) || 20;
-
-        //FILTERS
-        var objectKeys = Object.getOwnPropertyNames(reqParams);
-        var mongoFilterObj = {};
-        objectKeys.forEach(function (el) {
-            if (reservedWords.indexOf(el) == -1) {
-                mongoFilterObj[el] = reqParams[el];
-            }
-        });
-        var query = Customer.find(mongoFilterObj);
-        Customer.count(mongoFilterObj, function (err, totalCount) {
-            var pages = Math.ceil(totalCount / pageSize);
-            console.log("Pages: ", pages);
-            //ORDER
-            if (reqParams.order) {
-                var mongoOrderObj = {};
-                var orders = reqParams.order.split(",");
-                orders.forEach(function (el) {
-                    mongoOrderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
-                });
-                query.sort(mongoOrderObj);
-            }
-            query.limit(pageSize);
-            query.skip(pageSize * (page - 1));
-            query.exec(
-                function (err, result) {
-                    res.json({
-                        hasNext: page < pages, //ou false
-                        items: result
-                    });
-                }
-            );
-
-        });
+        findCustomer(req, res);
     }
 });
 
 
 /**
  * @apiVersion 0.1.0
- * @api {get} customer/diff/:date Find the customers modified or included after a date
- * @apiGroup customer
+ * @api {get} customer/diff/:date Find the customers modified after a date
+ * @apiGroup Customer
  * @apiParam {date} date a date reference
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
@@ -92,8 +49,8 @@ router.get('/', function (req, res) {
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
- *      "updated_at": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
+ *      "createdAt": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
+ *      "updatedAt": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
  *      "deleted": false
  *    }
  * @apiErrorExample {json} customer not found
@@ -101,58 +58,62 @@ router.get('/', function (req, res) {
  * @apiErrorExample {json} Find error
  *    HTTP/1.1 500 Internal Server Error
  */
-router.get('/diff/:time', function(req, res){
-    var time = req.params.time;
-    var reservedWords = ['order', 'page', 'pageSize'];
+router.get('/diff/:time', function (req, res) {
+    findCustomer(req, res);
+});
+
+function findCustomer(req, res) {
     var reqParams = req.query;
-
-    //order, page, pageSize
-    var page = parseInt(reqParams.page) || 1;
-    var pageSize = parseInt(reqParams.pageSize) || 20;
-
-    //FILTERS
-    var objectKeys = Object.getOwnPropertyNames(reqParams);
-    var mongoFilterObj = {};
-
-    objectKeys.forEach(function (el) {
-        if (reservedWords.indexOf(el) == -1) {
-            mongoFilterObj[el] = reqParams[el];
-        }
-    });
-    
-    var query = Customer.find(mongoFilterObj)
-    .where('updatedAt').gt(new Date(time));
-
-    Customer.count(mongoFilterObj, function (err, totalCount) {
+    var filterObj = transformFilter(reqParams);
+    Customer.count(filterObj, function (err, totalCount) {
+        var query = Customer.find(filterObj);
+        var page = parseInt(reqParams.page) || 1;
+        var pageSize = parseInt(reqParams.pageSize) || 20;
         var pages = Math.ceil(totalCount / pageSize);
-        console.log("Pages: ", pages);
-        //ORDER
         if (reqParams.order) {
-            var mongoOrderObj = {};
-            var orders = reqParams.order.split(",");
-            orders.forEach(function (el) {
-                mongoOrderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
-            });
-            query.sort(mongoOrderObj);
+            var order = transformOrder(reqParams.order, query);
+            query.sort(order);
+        }
+        if (req.params && req.params.time) {
+            query.where('updatedAt').gt(new Date(req.params.time));
         }
         query.limit(pageSize);
         query.skip(pageSize * (page - 1));
-        query.exec(
-            function (err, result) {
-                res.json({
-                    hasNext: page < pages, //ou false
-                    items: result
-                });
-            }
-        );
-
+        query.exec(function (err, result) {
+            res.setHeader('Date', new Date());
+            res.json({
+                hasNext: page < pages,
+                items: result
+            });
+        });
     });
-});
+}
+
+function transformOrder(order) {
+    var orderObj = {};
+    var orders = order.split(",");
+    orders.forEach(function (el) {
+        orderObj[el.startsWith("-") ? el.substr(1) : el] = el.startsWith("-") ? -1 : 1;
+    });
+    return orderObj;
+}
+
+function transformFilter(reqParams) {
+    var reservedWords = ['order', 'page', 'pageSize'];
+    var objectKeys = Object.getOwnPropertyNames(reqParams);
+    var filterObj = {};
+    objectKeys.forEach(function (el) {
+        if (reservedWords.indexOf(el) == -1) {
+            filterObj[el] = reqParams[el];
+        }
+    });
+    return filterObj;
+}
 
 /**
  * @apiVersion 0.1.0
  * @api {post} customer/ Register a new customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {Number} id customer id
  * @apiParam {String} name customer name
  * @apiParam {String} address customer address
@@ -170,7 +131,7 @@ router.get('/diff/:time', function(req, res){
  *      "name": "Study",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
+ *      "createdAt": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
  *      "deleted": false
  *    }
  * @apiErrorExample {json} Register error
@@ -182,6 +143,7 @@ router.post('/', function (req, res, next) {
         customer.id = uuid();
     }
     Customer.create(customer, function (err, item) {
+        res.setHeader('Date', new Date());
         res.status(200).send(item);
         if (next) next();
     });
@@ -190,7 +152,7 @@ router.post('/', function (req, res, next) {
 /**
  * @apiVersion 0.1.0
  * @api {delete} customer/:id Delete softly a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
@@ -203,6 +165,7 @@ router.delete('/:id', function (req, res, next) {
         Customer.delete({
             id: id
         }, function (err, result) {
+            res.setHeader('Date', new Date());
             if (err)
                 res.send(err);
             else {
@@ -217,7 +180,7 @@ router.delete('/:id', function (req, res, next) {
 /**
  * @apiVersion 0.1.0
  * @api {delete} customer/remove/:id Remove a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
@@ -230,6 +193,7 @@ router.delete('/remove/:id', function (req, res, next) {
         Customer.remove({
             id: id
         }, function (err, result) {
+            res.setHeader('Date', new Date());
             if (err)
                 res.send(err);
             else {
@@ -243,7 +207,7 @@ router.delete('/remove/:id', function (req, res, next) {
 /**
  * @apiVersion 0.1.0
  * @api {put} customer/ Edit a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {Number} id customer id
  * @apiParam {String} name customer name
  * @apiParam {String} address customer address
@@ -261,9 +225,9 @@ router.delete('/remove/:id', function (req, res, next) {
  *      "name": "Nelson",
  *      "address": "Rua Emilio Castelar, 51",
  *      "dateOfbirth": "06/13/1989",
- *      "created_at": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
- *      "updated_at": Fri Nov 12 2017 13:35:49 GMT-0200 (-02),
- *      "active": true
+ *      "createdAt": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
+ *      "updatedAt": Fri Nov 12 2017 13:35:49 GMT-0200 (-02),
+ *      "deleted": false
  *    }
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
@@ -276,6 +240,7 @@ router.put('/:id', function (req, res, next) {
     Customer.update({
         id: id
     }, customer, function (err, result) {
+        res.setHeader('Date', new Date());
         res.status(200).send();
         if (next) next();
     });
