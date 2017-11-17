@@ -9,7 +9,7 @@ const uuid = require('uuid/v4');
 /**
  * @apiVersion 0.1.0
  * @api {get} customer/:id Find a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
@@ -42,8 +42,8 @@ router.get('/', function (req, res) {
 
 /**
  * @apiVersion 0.1.0
- * @api {get} customer/diff/:date Find the customers modified or included after a date
- * @apiGroup customer
+ * @api {get} customer/diff/:date Find the customers modified after a date
+ * @apiGroup Customer
  * @apiParam {date} date a date reference
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
@@ -115,7 +115,7 @@ function transformFilter(reqParams) {
 /**
  * @apiVersion 0.1.0
  * @api {post} customer/ Register a new customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {Number} id customer id
  * @apiParam {String} name customer name
  * @apiParam {String} address customer address
@@ -153,7 +153,7 @@ router.post('/', function (req, res, next) {
 /**
  * @apiVersion 0.1.0
  * @api {delete} customer/:id Delete softly a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
@@ -180,7 +180,7 @@ router.delete('/:id', function (req, res, next) {
 /**
  * @apiVersion 0.1.0
  * @api {delete} customer/remove/:id Remove a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {id} id customer id
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 204 No Content
@@ -206,7 +206,7 @@ router.delete('/remove/:id', function (req, res, next) {
 /**
  * @apiVersion 0.1.0
  * @api {put} customer/ Edit a customer
- * @apiGroup customer
+ * @apiGroup Customer
  * @apiParam {Number} id customer id
  * @apiParam {String} name customer name
  * @apiParam {String} address customer address
