@@ -1,7 +1,7 @@
 {
-    "name": "costumer-api",
+    "name": "customer-api",
     "version": "0.1.0",
     "description": "Sample API",
-    "title": "Costumer API",
+    "title": "Customer API",
     "url": "http://localhost:8200/api/v1/"
 }
