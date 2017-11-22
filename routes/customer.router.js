@@ -4,8 +4,6 @@ var router = express.Router();
 var Customer = require('../models/customer.model.js');
 const uuid = require('uuid/v4');
 
-
-
 /**
  * @apiVersion 0.1.0
  * @api {get} customer/ Find all customers
@@ -13,10 +11,10 @@ const uuid = require('uuid/v4');
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
- *      "id": 1,
- *      "name": "Nelson",
- *      "address": "Rua Emilio Castelar, 51",
- *      "dateOfbirth": "06/13/1989",
+ *      "id": "46a78718-4603-4f64-88d6-db6eb6db2071",
+ *      "name": "Jade",
+ *      "address": "221B Baker Street",
+ *      "dateOfbirth": "12/29/2008",
  *      "createdAt": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
  *      "updatedAt": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
  *      "deleted": false
@@ -45,10 +43,10 @@ router.get('/', function (req, res) {
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
- *      "id": 1,
- *      "name": "Nelson",
- *      "address": "Rua Emilio Castelar, 51",
- *      "dateOfbirth": "06/13/1989",
+ *      "id": "46a78718-4603-4f64-88d6-db6eb6db2071",
+ *      "name": "Jade",
+ *      "address": "221B Baker Street",
+ *      "dateOfbirth": "12/29/2008",
  *      "createdAt": "Fri Nov 10 2017 18:24:08 GMT-0200 (-02)",
  *      "updatedAt": "Fri Nov 12 2017 13:35:49 GMT-0200 (-02)",
  *      "deleted": false
@@ -120,17 +118,17 @@ function transformFilter(reqParams) {
  * @apiParam {String} dateOfbirth customer dateOfbirth
  * @apiParamExample {json} Input
  *    {
- *      "name": "Study",
- *      "address": "Rua Emilio Castelar, 51",
- *      "dateOfbirth": "06/13/1989"
+ *      "name": "Jade",
+ *      "address": "221B Baker Street",
+ *      "dateOfbirth": "12/29/2008"
  *    }
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
- *      "id": as4s4f5wh548h9,
- *      "name": "Study",
- *      "address": "Rua Emilio Castelar, 51",
- *      "dateOfbirth": "06/13/1989",
+ *      "id": "46a78718-4603-4f64-88d6-db6eb6db2071",
+ *      "name": "Jade",
+ *      "address": "221B Baker Street",
+ *      "dateOfbirth": "12/29/2008",
  *      "createdAt": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
  *      "deleted": false
  *    }
@@ -154,8 +152,6 @@ router.post('/', function (req, res, next) {
  * @api {delete} customer/:id Delete softly a customer
  * @apiGroup Customer
  * @apiParam {id} id customer id
- * @apiSuccessExample {json} Success
- *    HTTP/1.1 204 No Content
  * @apiErrorExample {json} Delete error
  *    HTTP/1.1 500 Internal Server Error
  */
@@ -182,8 +178,6 @@ router.delete('/:id', function (req, res, next) {
  * @api {delete} customer/remove/:id Remove a customer
  * @apiGroup Customer
  * @apiParam {id} id customer id
- * @apiSuccessExample {json} Success
- *    HTTP/1.1 204 No Content
  * @apiErrorExample {json} Delete error
  *    HTTP/1.1 500 Internal Server Error
  */
@@ -214,23 +208,21 @@ router.delete('/remove/:id', function (req, res, next) {
  * @apiParam {String} dateOfbirth customer dateOfbirth
  * @apiParamExample {json} Input
  *    {
- *      "name": "Nelson",
- *      "address": "Rua Emilio Castelar, 51",
- *      "dateOfbirth": "06/13/1989"
+ *      "name": "Jade",
+ *      "address": "221B Baker Street",
+ *      "dateOfbirth": "12/29/2008"
  *    }
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
- *      "id": as4s4f5wh548h9,
- *      "name": "Nelson",
- *      "address": "Rua Emilio Castelar, 51",
- *      "dateOfbirth": "06/13/1989",
+ *      "id": 46a78718-4603-4f64-88d6-db6eb6db2071,
+ *      "name": "Jade",
+ *      "address": "221B Baker Street",
+ *      "dateOfbirth": "12/29/2008",
  *      "createdAt": Fri Nov 10 2017 18:24:08 GMT-0200 (-02),
  *      "updatedAt": Fri Nov 12 2017 13:35:49 GMT-0200 (-02),
  *      "deleted": false
  *    }
- * @apiSuccessExample {json} Success
- *    HTTP/1.1 204 No Content
  * @apiErrorExample {json} Register error
  *    HTTP/1.1 500 Internal Server Error
  */
