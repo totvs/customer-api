@@ -78,10 +78,10 @@ function findCustomer(req, res) {
         query.limit(pageSize);
         query.skip(pageSize * (page - 1));
         query.exec(function (err, result) {
-            res.setHeader('Date', new Date());
+            res.setHeader('Date', new Date().toISOString());
             res.json({
                 hasNext: page < pages,
-                items: result
+                items: result ? result : []
             });
         });
     });
