@@ -5,6 +5,8 @@ WORKDIR /sources
 
 RUN npm i
 
+RUN gulp apidoc
+
 FROM node:8-alpine
 
 RUN apk add --update tzdata
