@@ -2,7 +2,7 @@ define({ "api": [
   {
     "version": "0.1.0",
     "type": "delete",
-    "url": "customer/:id",
+    "url": "customers/:id",
     "title": "Delete softly a customer",
     "group": "Customer",
     "parameter": {
@@ -29,12 +29,12 @@ define({ "api": [
     },
     "filename": "routes/customer.router.js",
     "groupTitle": "Customer",
-    "name": "DeleteCustomerId"
+    "name": "DeleteCustomersId"
   },
   {
     "version": "0.1.0",
     "type": "delete",
-    "url": "customer/remove/:id",
+    "url": "customers/remove/:id",
     "title": "Remove a customer",
     "group": "Customer",
     "parameter": {
@@ -61,12 +61,12 @@ define({ "api": [
     },
     "filename": "routes/customer.router.js",
     "groupTitle": "Customer",
-    "name": "DeleteCustomerRemoveId"
+    "name": "DeleteCustomersRemoveId"
   },
   {
     "version": "0.1.0",
     "type": "get",
-    "url": "customer/",
+    "url": "customers/",
     "title": "Find all customers",
     "group": "Customer",
     "success": {
@@ -89,12 +89,12 @@ define({ "api": [
     },
     "filename": "routes/customer.router.js",
     "groupTitle": "Customer",
-    "name": "GetCustomer"
+    "name": "GetCustomers"
   },
   {
     "version": "0.1.0",
     "type": "get",
-    "url": "customer/diff/:date",
+    "url": "customers/diff/:date",
     "title": "Find the customers modified after a date",
     "group": "Customer",
     "parameter": {
@@ -135,12 +135,12 @@ define({ "api": [
     },
     "filename": "routes/customer.router.js",
     "groupTitle": "Customer",
-    "name": "GetCustomerDiffDate"
+    "name": "GetCustomersDiffDate"
   },
   {
     "version": "0.1.0",
     "type": "post",
-    "url": "customer/",
+    "url": "customers/",
     "title": "Register a new customer",
     "group": "Customer",
     "parameter": {
@@ -204,12 +204,12 @@ define({ "api": [
     },
     "filename": "routes/customer.router.js",
     "groupTitle": "Customer",
-    "name": "PostCustomer"
+    "name": "PostCustomers"
   },
   {
     "version": "0.1.0",
     "type": "put",
-    "url": "customer/",
+    "url": "customers/",
     "title": "Edit a customer",
     "group": "Customer",
     "parameter": {
@@ -273,6 +273,6 @@ define({ "api": [
     },
     "filename": "routes/customer.router.js",
     "groupTitle": "Customer",
-    "name": "PutCustomer"
+    "name": "PutCustomers"
   }
 ] });
