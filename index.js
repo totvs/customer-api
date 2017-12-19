@@ -1,6 +1,6 @@
 "use strict";
 var logger = require('./lib/logger');
-var config = require('./config.json');
+require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
 var customerRouter = require('./routes/customer.router');
@@ -32,8 +32,8 @@ function initRestServer() {
 
     app.use('/doc', express.static('doc'));
 
-    app.listen(config.restserver.port, function () {
-        logger.info('Rest Server started on port ' + config.restserver.port);
+    app.listen(process.env.REST_PORT, function () {
+        logger.info('Rest Server started on port ' + process.env.REST_PORT);
     });
 }
 
@@ -41,7 +41,7 @@ function initDB() {
     logger.info("Initializing database");
     var mongoose = require('mongoose');
     mongoose.Promise = global.Promise;
-    return mongoose.connect(config.mongodb.url);
+    return mongoose.connect(process.env.MONGO_URL);
 }
 
 function init() {
