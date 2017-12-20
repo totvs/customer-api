@@ -27,6 +27,11 @@ function initRestServer() {
         logger.info('Rest ' + req.method + ' Request on ' + req.originalUrl);
         next();
     });
+    app.use(function (req, res, next) {
+        // logger.info('Rest ' + req.method + ' Request on ' + req.originalUrl);
+        res.setHeader('Date', new Date().toISOString());
+        next();
+    });
     app.use('/api/v1/customers', customerRouter);
     app.use('/api/v1/users', userRouter);
 
