@@ -28,7 +28,7 @@ function initRestServer() {
         next();
     });
     app.use(function (req, res, next) {
-        // logger.info('Rest ' + req.method + ' Request on ' + req.originalUrl);
+        logger.info('To ISO String ' + new Date().toISOString());
         res.setHeader('Date', new Date().toISOString());
         next();
     });
