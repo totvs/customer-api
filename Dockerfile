@@ -5,11 +5,7 @@ WORKDIR /sources
 
 RUN npm i
 
-RUN npm install -g gulp
-
-RUN npm install -g gulp-apidoc
-
-RUN gulp apidoc
+RUN npm run doc
 
 FROM node:8-alpine
 
@@ -27,4 +23,4 @@ USER node
 
 EXPOSE 8200
 
-CMD ["node", "./index.js"]
+CMD ["npm", "run", "start"]
