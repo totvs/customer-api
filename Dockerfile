@@ -5,6 +5,10 @@ WORKDIR /sources
 
 RUN npm i
 
+RUN npm i gulp
+
+RUN npm i gulp-apidoc
+
 RUN gulp apidoc
 
 FROM node:8-alpine
