@@ -5,9 +5,9 @@ WORKDIR /sources
 
 RUN npm i
 
-RUN npm i gulp
+RUN npm install -g gulp
 
-RUN npm i gulp-apidoc
+RUN npm install -g gulp-apidoc
 
 RUN gulp apidoc
 
