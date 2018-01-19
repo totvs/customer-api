@@ -37,6 +37,11 @@ function initRestServer() {
 
     app.use('/doc', express.static('doc'));
 
+    app.get('/ping',  function(req, res, next) {
+        res.status(200).send();
+        if (next) next();
+    });
+    
     app.listen(process.env.REST_PORT, function () {
         logger.info('Rest Server started on port ' + process.env.REST_PORT);
     });
