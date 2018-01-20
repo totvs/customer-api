@@ -15,7 +15,7 @@ function initRestServer() {
     app.use(bodyParser.urlencoded({
         extended: false
     }));
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT ,DELETE, PATCH');
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Date");
@@ -23,11 +23,11 @@ function initRestServer() {
 
         next();
     });
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         logger.info('Rest ' + req.method + ' Request on ' + req.originalUrl);
         next();
     });
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         logger.info('To ISO String ' + new Date().toISOString());
         res.setHeader('Date', new Date().toISOString());
         next();
@@ -37,12 +37,12 @@ function initRestServer() {
 
     app.use('/doc', express.static('doc'));
 
-    app.get('/ping',  function(req, res, next) {
-        res.status(200).send();
+    app.get('/ping', function(req, res, next) {
+        res.status(200).send({});
         if (next) next();
     });
-    
-    app.listen(process.env.REST_PORT, function () {
+
+    app.listen(process.env.REST_PORT, function() {
         logger.info('Rest Server started on port ' + process.env.REST_PORT);
     });
 }
