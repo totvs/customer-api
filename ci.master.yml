@@ -60,4 +60,4 @@ steps:
     PathtoPublish: 'deployment'
     ArtifactName: 'deployment'
     publishLocation: Container
-    TargetPath: $(System.DefaultWorkingDirectory) 
+    TargetPath: $(System.DefaultWorkingDirectory)
