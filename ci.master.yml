@@ -9,7 +9,6 @@ trigger:
 pool: THFServices
 
 variables:
-- group: Tokens
 - name: imageName
   value: 'docker.totvs.io/thf/customer-api'
 
