@@ -50,14 +50,3 @@ steps:
       docker rmi $(imageName):$(Build.BuildNumber)
       docker rmi $(imageName):latest
   displayName: Remove images (TAG and LATEST)
-
-- script: "sed -i 's/PLACE_HOLDER_TAG/$(Build.BuildNumber)/g' deployment/deployment_customer_api/deployment.yaml"
-  displayName: 'Replace PLACE_HOLDER_TAG'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: deployment_customer_api/deployment.yaml'
-  inputs:
-    PathtoPublish: 'deployment'
-    ArtifactName: 'deployment'
-    publishLocation: Container
-    TargetPath: $(System.DefaultWorkingDirectory)
