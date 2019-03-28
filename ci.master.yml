@@ -19,7 +19,7 @@ steps:
     dockerRegistryEndpoint: docker.totvs.io
     command: 'Run an Image'
     dockerFile: Dockerfile
-    imageName: (imageName):$(Build.BuildNumber)
+    imageName: $(imageName):$(Build.BuildNumber)
     imageNamesPath: $(Build.BuildNumber)
     restartPolicy: always
     containerCommand: 'run -d --name=customer-api --restart=always --link customer-api-mongo:mongo -e REST_PORT=8200 -e MONGO_URL=mongodb://mongo:27017/customerdb -e LOG_DIR=/var/log/customer-api -e LOG_MAX_FILES=10 -e LOG_CONSOLE=true $(imageName):$(Build.BuildNumber)'
