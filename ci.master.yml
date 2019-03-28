@@ -14,7 +14,7 @@ variables:
 
 steps:
 - script: |
-    docker build --no-cache --pull -f Dockerfile -t $(imageName):$(Build.BuildNumber) .
+    docker build --build-arg name=customer-api --build-arg restart=always --build-arg link=customer-api-mongo:mongo --build-arg REST_PORT=8200 --build-arg MONGO_URL=mongodb://mongo:27017/customerdb --build-arg LOG_DIR=/var/log/customer-api --build-arg LOG_MAX_FILES=10 --build-arg LOG_CONSOLE=true --no-cache --pull -f Dockerfile -t $(imageName):$(Build.BuildNumber) .
   displayName: Build image TAG
 
 - script: |
