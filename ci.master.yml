@@ -11,11 +11,18 @@ pool: THFServices
 variables:
 - name: imageName
   value: 'docker.totvs.io/thf/customer-api'
-
 steps:
-- script: |
-    docker build --build-arg name=customer-api --build-arg restart=always --build-arg link=customer-api-mongo:mongo --build-arg REST_PORT=8200 --build-arg 'MONGO_URL=mongodb://mongo:27017/customerdb -e LOG_DIR=/var/log/customer-api -e LOG_MAX_FILES=10 -e LOG_CONSOLE=true' --no-cache --pull -f Dockerfile -t $(imageName):$(Build.BuildNumber) .
-  displayName: Build image TAG
+- task: Docker@1
+  displayName: 'Run customer-api'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryEndpoint: docker.totvs.io
+    command: 'Run an Image'
+    dockerFile: Dockerfile
+    imageName: (imageName):$(Build.BuildNumber)
+    imageNamesPath: $(Build.BuildNumber)
+    restartPolicy: always
+    containerCommand: 'run -d --name=customer-api --restart=always --link customer-api-mongo:mongo -e REST_PORT=8200 -e MONGO_URL=mongodb://mongo:27017/customerdb -e LOG_DIR=/var/log/customer-api -e LOG_MAX_FILES=10 -e LOG_CONSOLE=true (imageName):$(Build.BuildNumber)'
 
 - script: |
     docker tag $(imageName):$(Build.BuildNumber) $(imageName):latest
