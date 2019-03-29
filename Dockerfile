@@ -3,9 +3,10 @@ FROM node:8
 ADD ./ /sources
 WORKDIR /sources
 
-RUN npm i
+RUN npm ci
 
 RUN npm run doc
+
 
 FROM node:8-alpine
 

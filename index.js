@@ -1,13 +1,14 @@
 "use strict";
-var logger = require('./lib/logger');
+const logger = require('./lib/logger');
 require('dotenv').config();
-var express = require('express');
-var bodyParser = require('body-parser');
-var customerRouter = require('./routes/customer.router');
-var User = require('./models/user.model');
-var userRouter = require('./routes/user.router');
-var router = express.Router();
-var app = express();
+const express = require('express');
+const bodyParser = require('body-parser');
+const customerRouter = require('./routes/customer.router');
+const User = require('./models/user.model');
+const userRouter = require('./routes/user.router');
+const router = express.Router();
+const app = express();
+const port = process.env.REST_PORT || 8200;
 
 function initRestServer() {
     logger.info("Initializing Rest Server");
@@ -42,16 +43,16 @@ function initRestServer() {
         if (next) next();
     });
 
-    app.listen(process.env.REST_PORT, function() {
-        logger.info('Rest Server started on port ' + process.env.REST_PORT);
+    app.listen(port, function() {
+        logger.info('Rest Server started on port ' + port);
     });
 }
 
 function initDB() {
     logger.info("Initializing database");
-    var mongoose = require('mongoose');
+    const mongoose = require('mongoose');
     mongoose.Promise = global.Promise;
-    return mongoose.connect(process.env.MONGO_URL);
+    return mongoose.connect(process.env.MONGO_URL || `mongodb://mongo:27017/customerdb`);
 }
 
 function init() {
