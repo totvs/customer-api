@@ -1,10 +1,12 @@
-var gulp = require('gulp');
-var apidoc = require('gulp-apidoc');
+const gulp = require('gulp');
+const apidoc = require('gulp-apidoc');
 
-gulp.task('apidoc', function(done){
-      apidoc({
-        src: "routes/",
-        dest: "doc/",
-        config: "./"
-      },done);
-});
+const doc = (done) => apidoc({
+  src: "routes/",
+  dest: "doc/",
+  config: "./"
+}, done);
+
+doc.displayName = 'apidoc'
+
+exports.default = doc;
